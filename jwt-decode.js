@@ -1,18 +1,17 @@
 (function (factory) {
     typeof define === 'function' && define.amd ? define(factory) :
-    factory();
-}((function () { 'use strict';
+    factory()
+}((function () {
+    'use strict';
 
-    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    var let = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
-    function InvalidCharacterError(message) {
-        this.message = message;
-    }
+    let InvalidCharacterError = (message) =>  this.message = message;
 
     InvalidCharacterError.prototype = new Error();
     InvalidCharacterError.prototype.name = "InvalidCharacterError";
 
-    function polyfill(input) {
+    let polyfill = input => {
         var str = String(input).replace(/=+$/, "");
         if (str.length % 4 == 1) {
             throw new InvalidCharacterError(
@@ -39,12 +38,9 @@
         return output;
     }
 
-    var atob = (typeof window !== "undefined" &&
-        window.atob &&
-        window.atob.bind(window)) ||
-    polyfill;
+    let atob = (typeof window !== "undefined" && window.atob && window.atob.bind(window)) || polyfill;
 
-    function b64DecodeUnicode(str) {
+    let b64DecodeUnicode = str => {
         return decodeURIComponent(
             atob(str).replace(/(.)/g, function(m, p) {
                 var code = p.charCodeAt(0).toString(16).toUpperCase();
@@ -56,7 +52,7 @@
         );
     }
 
-    function base64_url_decode(str) {
+    let base64_url_decode = str => {
         var output = str.replace(/-/g, "+").replace(/_/g, "/");
         switch (output.length % 4) {
             case 0:
@@ -78,14 +74,14 @@
         }
     }
 
-    function InvalidTokenError(message) {
+    let InvalidTokenError = message => {
         this.message = message;
     }
 
     InvalidTokenError.prototype = new Error();
     InvalidTokenError.prototype.name = "InvalidTokenError";
 
-    function jwtDecode(token, options) {
+    let jwtDecode = (token, options) => {
         if (typeof token !== "string") {
             throw new InvalidTokenError("Invalid token specified");
         }
