@@ -1,26 +1,25 @@
 (function (factory) {
-    typeof define === 'function' && define.amd ? define(factory) :
-    factory()
+    typeof define === 'function' && define.amd ? define(factory) : factory()
 }((function () {
-    'use strict';
+    'use strict'
 
-    var let = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 
-    let InvalidCharacterError = (message) =>  this.message = message;
+    let InvalidCharacterError = (message) =>  this.message = message
 
-    InvalidCharacterError.prototype = new Error();
-    InvalidCharacterError.prototype.name = "InvalidCharacterError";
+    InvalidCharacterError.prototype = new Error()
+    InvalidCharacterError.prototype.name = "InvalidCharacterError"
 
     let polyfill = input => {
-        var str = String(input).replace(/=+$/, "");
+        let str = String(input).replace(/=+$/, "")
         if (str.length % 4 == 1) {
             throw new InvalidCharacterError(
                 "'atob' failed: The string to be decoded is not correctly encoded."
-            );
+            )
         }
         for (
             // initialize result and counters
-            var bc = 0, bs, buffer, idx = 0, output = "";
+            let bc = 0, bs, buffer, idx = 0, output = "";
             // get next character   
             (buffer = str.charAt(idx++));
             // character found in table? initialize bit storage and add its ascii value;
@@ -33,65 +32,65 @@
             0
         ) {
             // try to find character in table (0-63, not found => -1)
-            buffer = chars.indexOf(buffer);
+            buffer = chars.indexOf(buffer)
         }
-        return output;
+        return output
     }
 
-    let atob = (typeof window !== "undefined" && window.atob && window.atob.bind(window)) || polyfill;
+    let atob = (typeof window !== "undefined" && window.atob && window.atob.bind(window)) || polyfill
 
     let b64DecodeUnicode = str => {
         return decodeURIComponent(
             atob(str).replace(/(.)/g, function(m, p) {
-                var code = p.charCodeAt(0).toString(16).toUpperCase();
+                let code = p.charCodeAt(0).toString(16).toUpperCase()
                 if (code.length < 2) {
-                    code = "0" + code;
+                    code = "0" + code
                 }
-                return "%" + code;
+                return "%" + code
             })
-        );
+        )
     }
 
     let base64_url_decode = str => {
-        var output = str.replace(/-/g, "+").replace(/_/g, "/");
+        let output = str.replace(/-/g, "+").replace(/_/g, "/")
         switch (output.length % 4) {
             case 0:
-                break;
+                break
             case 2:
-                output += "==";
-                break;
+                output += "=="
+                break
             case 3:
-                output += "=";
-                break;
+                output += "="
+                break
             default:
-                throw "Illegal base64url string!";
+                throw "Illegal base64url string!"
         }
 
         try {
-            return b64DecodeUnicode(output);
+            return b64DecodeUnicode(output)
         } catch (err) {
-            return atob(output);
+            return atob(output)
         }
     }
 
     let InvalidTokenError = message => {
-        this.message = message;
+        this.message = message
     }
 
-    InvalidTokenError.prototype = new Error();
-    InvalidTokenError.prototype.name = "InvalidTokenError";
+    InvalidTokenError.prototype = new Error()
+    InvalidTokenError.prototype.name = "InvalidTokenError"
 
     let jwtDecode = (token, options) => {
         if (typeof token !== "string") {
-            throw new InvalidTokenError("Invalid token specified");
+            throw new InvalidTokenError("Invalid token specified")
         }
 
         options = options || {};
-        var pos = options.header === true ? 0 : 1;
+        let pos = options.header === true ? 0 : 1
         try {
-            return JSON.parse(base64_url_decode(token.split(".")[pos]));
+            return JSON.parse(base64_url_decode(token.split(".")[pos]))
         } catch (e) {
-            throw new InvalidTokenError("Invalid token specified: " + e.message);
+            throw new InvalidTokenError("Invalid token specified: " + e.message)
         }
     }
 
@@ -103,11 +102,11 @@
     if (window) {
         if (typeof window.define == "function" && window.define.amd) {
             window.define("jwt_decode", function() {
-                return jwtDecode;
+                return jwtDecode
             });
         } else if (window) {
-            window.jwt_decode = jwtDecode;
+            window.jwt_decode = jwtDecode
         }
     }
 
-})));
+})))
